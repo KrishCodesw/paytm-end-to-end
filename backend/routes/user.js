@@ -111,6 +111,31 @@ router.put("/update-creds",authMiddleware,async(req,res)=>{
 
 })
 
+router.get("/bulk",authMiddleware,async(req,res)=>{
+    const filter=req.params.filter||"";
+
+    const users=await User.find({
+        $or:[{
+            firstname:{
+                "$regex":filter
+            },
+            lastname:{
+                "$regex":filter
+            },
+        }]
+    })
+    res.json({
+        user:users.map(user=>({
+            username:user.username,
+            firstname:user.firstname,
+            lastname:user.lastname,
+            _id:user._id
+        }))
+    })
+
+})
+
+
 
 
 
