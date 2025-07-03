@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router();
 const zod=require('zod')
-const {User}=require("../db")
+const {User,Account}=require("../db")
 const jwt=require("jsonwebtoken")
 const { JWT_SECRET } = require("../config");
 const bcrypt = require('bcryptjs');
@@ -43,6 +43,12 @@ const hashedPassword = await bcrypt.hash(req.body.password, 10);
         lastname:req.body.lastname
     })
     const userId = user._id;
+    
+       await Account.create({
+        userId,
+        balance:1+Math.random()*10000
+    })
+
 
     const token=jwt.sign({userId},JWT_SECRET);
     res.json({
@@ -50,6 +56,7 @@ const hashedPassword = await bcrypt.hash(req.body.password, 10);
         token:token
     })
 
+ 
 
 })
 
