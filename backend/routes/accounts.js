@@ -78,7 +78,7 @@ router.post("/transfer",authMiddleware,async(req,res)=>{
      await session.commitTransaction();
 
     res.json({
-        massage:"Amount transferred to the respective account"
+        massage:"Amount transferred to the respective account and the remaining balance can be seen"
     })
 })
 
