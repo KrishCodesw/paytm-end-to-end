@@ -5,6 +5,7 @@ const {User}=require("../db")
 const jwt=require("jsonwebtoken")
 const { JWT_SECRET } = require("../config");
 const bcrypt = require('bcryptjs');
+const authMiddleware=require("../midddleware")
 
 const signupBody = zod.object({
     username: zod.string().email(),
@@ -87,6 +88,29 @@ router.post("/signin",async(req,res)=>{
     
      
 })
+
+
+const updateBody=zod.object({
+    password:zod.string.optional(),
+    firstname:zod.string.optional(),
+    lastname:zod.string.optional()
+})
+
+router.put("/update-creds",authMiddleware,async(req,res)=>{
+    const {success}=updateBody.safeParse(req.body)
+    if(!success){
+        res.status(411).json({
+            message:"Error updating"
+        })
+    }
+
+    await User.updateOne({_id:req.userId},req.body)
+    res.json({
+        message:"Updated credentials! "
+    })
+
+})
+
 
 
 
