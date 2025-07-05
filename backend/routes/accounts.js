@@ -4,12 +4,22 @@ const { Account } = require('../db');
 const mongoose=require("mongoose")
 const router=express.Router();
 
-router.get("/balance",authMiddleware,async(req,res)=>{
-        const account=await Account.findOne({
-            userId:req.userId
-        })
-        res.json({balance:account.balance})
-})
+router.get("/balance", authMiddleware, async (req, res) => {
+    try {
+        const account = await Account.findOne({ userId: req.userId });
+
+        if (!account) {
+            return res.status(404).json({ message: "Account not found for this user" });
+        }
+
+        res.json({ balance: account.balance });
+
+    } catch (err) {
+        console.error("Error fetching balance:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 // router.post("/transfer",authMiddleware,async(req,res)=>{
 //         const {amount,to}=req.body;
@@ -42,58 +52,59 @@ router.get("/balance",authMiddleware,async(req,res)=>{
 
 
 
-router.post("/transfer",authMiddleware,async(req,res)=>{
-        const session=await mongoose.startSession();
+router.post("/transfer", authMiddleware, async (req, res) => {
+    console.log("Authenticated userId:", req.userId);
 
+    const session = await mongoose.startSession();
 
-        session.startTransaction()
+    try {
+        const { amount, to } = req.body;
 
-        const {amount,to}=req.body;
-        const account=await Account.findOne({
-            userId:req.userId
-        }).session(session)
-
-
-
-        if(!account||account.balance<amount){
-             await session.abortTransaction();
-         return   res.status(400).json({
-                message:"Insufficient balance"
-            })
+        if (!amount || !to) {
+            return res.status(400).json({ message: "Amount and recipient required" });
         }
 
+        session.startTransaction();
 
-        const toAccount=await Account.findOne({
-            userId:to
-        }).session(session)
-            if (!toAccount) {
-                 await session.abortTransaction();
-        return res.status(400).json({
-            message: "Invalid account"
-        })
+        // Find sender account
+        const sender = await Account.findOne({ userId: new mongoose.Types.ObjectId(req.userId) }).session(session);
+        console.log(sender);
+        
+        if (!sender) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: "Sender account not found" });
+        }
+
+        if (sender.balance < amount) {
+            await session.abortTransaction();
+            return res.status(400).json({ message: "Insufficient balance" });
+        }
+
+        // Find recipient account
+        const recipient = await Account.findOne({ userId:new mongoose.Types.ObjectId(to) }).session(session);
+        if (!recipient) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: "Recipient account not found" });
+        }
+
+        // Update balances
+        sender.balance -= amount;
+        recipient.balance += amount;
+
+        await sender.save({ session });
+        await recipient.save({ session });
+
+        await session.commitTransaction();
+        res.json({ message: "Transfer successful" });
+
+    } catch (err) {
+        await session.abortTransaction();
+        console.error("Transfer error:", err);
+        res.status(500).json({ message: "Internal server error" });
+    } finally {
+        session.endSession();
     }
-
-    await account.updateOne({userId:req.userId},{$inc:{balance:-amount}})
-    await account.updateOne({userId:to},{$inc:{balance:amount}})
-     await session.commitTransaction();
-
-    res.json({
-        massage:"Amount transferred to the respective account and the remaining balance can be seen"
-    })
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
+});
 
 
 

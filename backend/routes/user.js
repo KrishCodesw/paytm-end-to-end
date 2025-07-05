@@ -1,17 +1,17 @@
 const express=require('express')
 const router=express.Router();
-const zod=require('zod')
+const {z}=require('zod')
 const {User,Account}=require("../db")
 const jwt=require("jsonwebtoken")
 const { JWT_SECRET } = require("../config");
 const bcrypt = require('bcryptjs');
-const authMiddleware=require("../midddleware")
+const {authMiddleware}=require("../midddleware")
 
-const signupBody = zod.object({
-    username: zod.string().email(),
-	firstname: zod.string(),
-	lastname: zod.string(),
-	password: zod.string()
+const signupBody = z.object({
+    username: z.string().email(),
+	firstname: z.string(),
+	lastname: z.string(),
+	password: z.string()
 })
 
 
@@ -44,13 +44,17 @@ const hashedPassword = await bcrypt.hash(req.body.password, 10);
     })
     const userId = user._id;
     
-       await Account.create({
-        userId,
-        balance:1+Math.random()*10000
-    })
+       const existingAccount = await Account.findOne({ userId });
 
+       
+if (!existingAccount) {
+  await Account.create({
+    userId,
+    balance: 1 + Math.random() * 10000
+  });
+}
 
-    const token=jwt.sign({userId},JWT_SECRET);
+    const token=jwt.sign({userId:user._id},JWT_SECRET);
     res.json({
         message:"User created successfully",
         token:token
@@ -62,9 +66,9 @@ const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
 
 
-const signinBody = zod.object({
-    username: zod.string().email(),
-	password: zod.string()
+const signinBody = z.object({
+    username: z.string().email(),
+	password: z.string()
 })
 
 router.post("/signin",async(req,res)=>{
@@ -97,10 +101,10 @@ router.post("/signin",async(req,res)=>{
 })
 
 
-const updateBody=zod.object({
-    password:zod.string.optional(),
-    firstname:zod.string.optional(),
-    lastname:zod.string.optional()
+const updateBody=z.object({
+    password:z.string().optional(),
+    firstname:z.string().optional(),
+    lastname:z.string().optional()
 })
 
 router.put("/update-creds",authMiddleware,async(req,res)=>{
@@ -119,7 +123,7 @@ router.put("/update-creds",authMiddleware,async(req,res)=>{
 })
 
 router.get("/bulk",authMiddleware,async(req,res)=>{
-    const filter=req.params.filter||"";
+    const filter=req.query.filter||"";
 
     const users=await User.find({
         $or:[{

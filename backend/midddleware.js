@@ -18,9 +18,8 @@ try {
 
 }
 catch(e){
-    res.json({
-        message:e
-    })
+ res.status(401).json({ message: 'Invalid or expired token' });
+
 }
 }
 
