@@ -14,5 +14,8 @@
     "mongoose": "^8.1.0",
     "nodemon": "^3.1.10",
     "zod": "^3.25.71"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10"
   }
 }
