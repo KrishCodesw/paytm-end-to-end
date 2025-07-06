@@ -146,6 +146,23 @@ router.get("/bulk",authMiddleware,async(req,res)=>{
 
 })
 
+router.get("/me",authMiddleware,async(req,res)=>{
+     const user = await User.findById(req.userId);
+  const account = await Account.findOne({ userId: req.userId });
+    if (!user || !account) {
+    return res.status(404).json({ message: "User not found" });
+  }
+   res.json({
+    firstname: user.firstname,
+    username: user.username,
+    accountId: account._id,
+  });
+})
+
+
+
+
+
 
 
 

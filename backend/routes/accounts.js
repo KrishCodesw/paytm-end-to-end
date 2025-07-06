@@ -1,6 +1,6 @@
 const express=require('express');
 const { authMiddleware } = require('../midddleware');
-const { Account } = require('../db');
+const { Account ,User} = require('../db');
 const mongoose=require("mongoose")
 const router=express.Router();
 
@@ -81,18 +81,47 @@ router.post("/transfer", authMiddleware, async (req, res) => {
         }
 
         // Find recipient account
-        const recipient = await Account.findOne({ userId:new mongoose.Types.ObjectId(to) }).session(session);
+        const recipient = await User.findOne({ username:to }).session(session);
         if (!recipient) {
             await session.abortTransaction();
             return res.status(404).json({ message: "Recipient account not found" });
         }
+        if(recipient._id.toString()===req.userId){
+            await session.abortTransaction();
+      return res.status(400).json({ message: "Cannot transfer to yourself" });
+        }
+
+        const recipientID = await Account.findOne({ userId: recipient._id }).session(session);
+        console.log(recipientID)
+    if (!recipientID) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: "Recipient account not found" });
+    }
 
         // Update balances
-        sender.balance -= amount;
-        recipient.balance += amount;
+        // sender.balance -= amount;
+        // recipientID.balance += amount;
 
-        await sender.save({ session });
-        await recipient.save({ session });
+        // await sender.save({ session });
+        // await recipientID.save({ session });
+
+        //BAD WAY 
+        //GOOD WAY 
+
+        await Account.updateOne({userId:sender.userId},{$inc:{balance:-amount}},{session})
+        await Account.updateOne({userId:recipient._id},{$inc:{balance:amount}},{session})
+
+
+
+
+
+
+
+
+
+
+
+
 
         await session.commitTransaction();
         res.json({ message: "Transfer successful" });
