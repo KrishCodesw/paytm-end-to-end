@@ -4,11 +4,11 @@ const Authcontext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [token, settoken] = useState(() => {
-    localStorage.getItem("token");
+    return localStorage.getItem("token");
   });
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
-    settoken(token);
+    settoken(newToken);
   };
   const logout = () => {
     localStorage.removeItem("token");
@@ -25,5 +25,9 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  useContext(Authcontext);
+  const context = useContext(Authcontext);
+  if (context === undefined || context === null) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

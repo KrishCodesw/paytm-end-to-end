@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroui/navbar": "^2.2.20",
+    "@hookform/resolvers": "^5.1.1",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
     "react": "^18.2.0",
