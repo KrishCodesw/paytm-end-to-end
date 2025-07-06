@@ -22,11 +22,14 @@ const Signin = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://paytm-backend-9epc.onrender.com/api/v1/user/signin",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Signin failed");

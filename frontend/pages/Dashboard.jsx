@@ -11,14 +11,20 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchBalance = async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/v1/account/balance", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const mydata = await fetch("http://localhost:3000/api/v1/user/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://paytm-backend-9epc.onrender.com/api/v1/account/balance",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const mydata = await fetch(
+        "hhttps://paytm-backend-9epc.onrender.com/api/v1/user/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const mydatajson = await mydata.json();
       if (mydata.ok) setUser(mydatajson);
       const json = await res.json();

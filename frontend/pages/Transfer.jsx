@@ -9,14 +9,17 @@ const Transfer = () => {
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/v1/account/transfer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://paytm-backend-9epc.onrender.com/api/v1/account/transfer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
       const json = res.json();
       if (!res.ok) throw new Error(json.message || "Transfer failed");
       toast.success("Money transferred!");
