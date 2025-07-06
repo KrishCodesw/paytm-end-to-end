@@ -66,9 +66,7 @@ const Dashboard = () => {
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between text-lg">
-              <span className="text-white font-bold">
-                Current Balance ------------------
-              </span>
+              <span className="text-white font-bold">Current Balance --</span>
               <span className="text-2xl font-semibold text-green-400 tracking-wider">
                 ₹{balance?.toFixed(2)}
               </span>
@@ -81,6 +79,41 @@ const Dashboard = () => {
                 Account ID: <span className="text-white">{user.accountId}</span>
               </p>
             </div>
+            <div className="pt-4 text-center">
+              <h3 className="text-md text-gray-300 mb-2">Your QR Code</h3>
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                  user.username || "no-id"
+                )}`}
+                alt="User QR"
+                className="mx-auto rounded-lg bg-white p-2 shadow-md"
+              />
+              <p className="text-lg text-white mt-1">
+                Scan this to pay {user.firstname}
+              </p>
+            </div>
+            {user.username && (
+              <button
+                onClick={() => {
+                  const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${user.username}`;
+                  fetch(qrURL)
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `${user.username}_qr.png`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                    });
+                }}
+                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl shadow transition-all duration-300"
+              >
+                Download QR Code
+              </button>
+            )}
+
             <div className="pt-6">
               <Link
                 to="/transfer"

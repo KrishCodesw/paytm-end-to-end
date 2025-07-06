@@ -1,10 +1,29 @@
 import React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Html5QrcodeScanner } from "html5-qrcode";
 import { useNavigate } from "react-router-dom";
 const Transfer = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const navigate = useNavigate();
+  useEffect(() => {
+    const scanner = new Html5QrcodeScanner("qr-reader", {
+      fps: 10,
+      qrbox: 250,
+    });
+
+    scanner.render(
+      (decodedText) => {
+        console.log("Scanned:", decodedText);
+        setValue("to", decodedText);
+        scanner.clear();
+      },
+      (error) => {
+        console.warn("Scan error", error);
+      }
+    );
+  }, []);
 
   const onSubmit = async (data) => {
     try {
@@ -20,7 +39,7 @@ const Transfer = () => {
           body: JSON.stringify(data),
         }
       );
-      const json = res.json();
+      const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Transfer failed");
       toast.success("Money transferred!");
       navigate("/");
@@ -43,6 +62,8 @@ const Transfer = () => {
           placeholder="Amount"
           className="w-full p-2 border"
         />
+        <div id="qr-reader"></div>
+
         <button type="submit" className="bg-black text-white px-4 py-2">
           Transfer
         </button>
