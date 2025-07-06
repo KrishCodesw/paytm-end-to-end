@@ -43,13 +43,10 @@ const Dashboard = () => {
 
   return (
     <div className="relative min-h-screen  flex items-center justify-center px-4 overflow-hidden bg-[#0f0c29]">
-      {/* Background Radial Gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#302b63,_#0f0c29_60%)] opacity-90 z-0"></div>
 
-      {/* Animated Noise Texture Overlay */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] z-0 animate-fadeIn"></div>
 
-      {/* Foreground Card */}
       <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] z-10 animate-fadeIn">
         <div className="mb-6">
           <h2 className="text-3xl font-extrabold tracking-tight mb-1">
