@@ -40,42 +40,51 @@ const Signup = () => {
   };
 
   return (
-    <div>
-      <div className="p-8 max-w-md mx-auto">
-        <h2 className="text-xl text-red-100 font-bold mb-4 genos">Signup</h2>
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] text-white animate-fadeIn">
+        <h2 className="text-3xl font-extrabold tracking-tight mb-6 text-center">
+          Create Your Account
+        </h2>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <input
             {...register("username")}
             placeholder="Username"
-            className="w-full bg-red-100 rounded-xl p-2 border"
+            className="w-full px-4 py-2 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <div className="flex bg-red-100 rounded-xl">
+
+          <div className="flex items-center bg-white/20 border border-white/30 rounded-lg overflow-hidden">
             <input
               {...register("password")}
               placeholder="Password"
               type={showPassword ? "text" : "password"}
-              className="w-full p-2  border"
+              className="w-full px-4 py-2 bg-transparent text-white placeholder-white focus:outline-none"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className=" text-sm text-blue-600"
+              className="px-3 text-blue-300 hover:text-blue-500 text-sm"
             >
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
+
           <input
             {...register("firstname")}
             placeholder="First Name"
-            className="w-full p-2 bg-red-100 rounded-xl border"
+            className="w-full px-4 py-2 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <input
             {...register("lastname")}
             placeholder="Last Name"
-            className="w-full p-2 bg-red-100 rounded-xl border"
+            className="w-full px-4 py-2 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button type="submit" className="bg-black text-white px-4 py-2">
+
+          <button
+            type="submit"
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 rounded-lg transition-all duration-300"
+          >
             Signup
           </button>
         </form>
