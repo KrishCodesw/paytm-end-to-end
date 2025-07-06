@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-mongoose.connect('mongodb+srv://devpalsw:BmOH7OTbT11eELFW@paytm.ylcbznq.mongodb.net/').then(()=>{console.log("Connected to MongoDB")}).catch((error)=>{ console.error('MongoDB connection error:', error);})
+mongoose.connect(process.env.MONGO_URL).then(()=>{console.log("Connected to MongoDB")}).catch((error)=>{ console.error('MongoDB connection error:', error);})
 
 const UserSchema=new mongoose.Schema({
     username:{

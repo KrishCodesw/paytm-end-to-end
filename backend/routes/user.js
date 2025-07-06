@@ -3,7 +3,7 @@ const router=express.Router();
 const {z}=require('zod')
 const {User,Account}=require("../db")
 const jwt=require("jsonwebtoken")
-const { JWT_SECRET } = require("../config");
+require("dotenv").config();
 const bcrypt = require('bcryptjs');
 const {authMiddleware}=require("../midddleware")
 
@@ -54,7 +54,7 @@ if (!existingAccount) {
   });
 }
 
-    const token=jwt.sign({userId:user._id},JWT_SECRET);
+    const token=jwt.sign({userId:user._id},process.env.JWT_SECRET);
     res.json({
         message:"User created successfully",
         token:token
@@ -93,7 +93,7 @@ router.post("/signin",async(req,res)=>{
   }
 
 
-        const token=jwt.sign({userId:user._id},JWT_SECRET)
+        const token=jwt.sign({userId:user._id},process.env.JWT_SECRET)
         res.json({token:token})
         return
     
