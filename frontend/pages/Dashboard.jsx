@@ -1,7 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 const Dashboard = () => {
   const [balance, setBalance] = useState();
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     firstname: "",
     username: "",
@@ -11,41 +13,83 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchBalance = async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        "https://paytm-backend-9epc.onrender.com/api/v1/account/balance",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const mydata = await fetch(
-        "hhttps://paytm-backend-9epc.onrender.com/api/v1/user/me",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const mydatajson = await mydata.json();
-      if (mydata.ok) setUser(mydatajson);
-      const json = await res.json();
-      if (res.ok) setBalance(json.balance);
+      try {
+        const res = await fetch(
+          "https://paytm-backend-9epc.onrender.com/api/v1/account/balance",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const mydata = await fetch(
+          "https://paytm-backend-9epc.onrender.com/api/v1/user/me",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const mydatajson = await mydata.json();
+        const json = await res.json();
+        if (mydata.ok) setUser(mydatajson);
+        if (res.ok) setBalance(json.balance);
+      } catch (error) {
+        toast.error;
+      } finally {
+        setLoading(false);
+      }
     };
     fetchBalance();
   }, []);
 
   return (
-    <div>
-      <div className="p-8">
-        <h2 className="text-xl text-white font-bold mb-4">Dashboard</h2>
-        <h1 className="text-2xl text-white font-bold">
-          Welcome, {user.firstname}
-        </h1>
-        {balance === null ? (
-          <p className="text-xl text-white font-bold mb-4">Loading...</p>
+    <div className="relative min-h-screen  flex items-center justify-center px-4 overflow-hidden bg-[#0f0c29]">
+      {/* Background Radial Gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#302b63,_#0f0c29_60%)] opacity-90 z-0"></div>
+
+      {/* Animated Noise Texture Overlay */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] z-0 animate-fadeIn"></div>
+
+      {/* Foreground Card */}
+      <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] z-10 animate-fadeIn">
+        <div className="mb-6">
+          <h2 className="text-3xl font-extrabold tracking-tight mb-1">
+            Hello,{" "}
+            <span className="text-white">{user.firstname || "User"}</span>
+          </h2>
+        </div>
+
+        {loading ? (
+          <div className="space-y-4 animate-pulse">
+            <div className="h-6 bg-white/20 rounded w-2/3"></div>
+            <div className="h-4 bg-white/10 rounded w-1/3"></div>
+          </div>
         ) : (
-          <p className="text-xl text-white font-bold mb-4">
-            Your current balance : ₹{balance}
-          </p>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between text-lg">
+              <span className="text-white font-bold">
+                Current Balance ------------------
+              </span>
+              <span className="text-2xl font-semibold text-green-400 tracking-wider">
+                ₹{balance?.toFixed(2)}
+              </span>
+            </div>
+            <div className="text-sm text-white font-bold">
+              <p>
+                Username: <span className="text-white">{user.username}</span>
+              </p>
+              <p>
+                Account ID: <span className="text-white">{user.accountId}</span>
+              </p>
+            </div>
+            <div className="pt-6">
+              <Link
+                to="/transfer"
+                className="block w-full bg-red-200 hover:bg-red-300 text-black py-2 rounded-xl shadow-lg transition-all duration-300 text-center"
+              >
+                Transfer Money
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>
