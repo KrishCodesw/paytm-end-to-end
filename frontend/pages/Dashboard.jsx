@@ -2,6 +2,11 @@ import React from "react";
 import { useState, useEffect } from "react";
 const Dashboard = () => {
   const [balance, setBalance] = useState();
+  const [user, setUser] = useState({
+    firstname: "",
+    username: "",
+    accountId: "",
+  });
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -11,6 +16,11 @@ const Dashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      const mydata = await fetch("http://localhost:3000/api/v1/user/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const mydatajson = await mydata.json();
+      if (mydata.ok) setUser(mydatajson);
       const json = await res.json();
       if (res.ok) setBalance(json.balance);
     };
@@ -21,11 +31,14 @@ const Dashboard = () => {
     <div>
       <div className="p-8">
         <h2 className="text-xl text-white font-bold mb-4">Dashboard</h2>
+        <h1 className="text-2xl text-white font-bold">
+          Welcome, {user.firstname}
+        </h1>
         {balance === null ? (
           <p className="text-xl text-white font-bold mb-4">Loading...</p>
         ) : (
           <p className="text-xl text-white font-bold mb-4">
-            Your balance: ₹{balance}
+            Your current balance : ₹{balance}
           </p>
         )}
       </div>
