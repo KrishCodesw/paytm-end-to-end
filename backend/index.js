@@ -8,10 +8,12 @@ require("dotenv").config();
 const app=express();
 
 app.use(cors({
-  origin: "https://paytm-roan.vercel.app/",
+  origin: "https://paytm-roan.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true, // only if using cookies
 }));
+app.options("*", cors());
+
 app.use(express.json())
 app.use('/api/v1',rootRouter)
 
