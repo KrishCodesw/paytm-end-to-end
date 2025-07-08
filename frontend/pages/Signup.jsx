@@ -50,13 +50,23 @@ const Signup = () => {
         <h2 className="text-3xl font-extrabold tracking-tight mb-6 text-center">
           Create Your Account
         </h2>
+        <p className="text-sm text-center text-white/80 mb-6">
+          Your account will automatically be generated with an initial balance
+          between INR 0–10,000, based on your{" "}
+          <span className="italic">past Karma</span> with people. <br />
+          This project is an attempt to apply my knowledge of{" "}
+          <strong>React</strong>, <strong>Tailwind CSS</strong>,
+          <strong>HTTP servers</strong>, <strong>MongoDB transactions</strong>,{" "}
+          <strong>QR code integration</strong>, and{" "}
+          <strong>authentication</strong>.
+        </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <input
               type="text"
               {...register("username")}
-              placeholder="Username"
+              placeholder="Username-Should be an email"
               className="w-full px-4 py-2 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             {errors.username && (
